@@ -13,6 +13,7 @@ def rsi(px: pd.Series, period: int = 14) -> pd.Series:
     rs = roll_up / (roll_down + 1e-12)
     return 100 - 100 / (1 + rs)
 
+
 def make_features(prices: pd.DataFrame) -> pd.DataFrame:
     """
     Constructs technical features per ticker using only past information:
@@ -23,17 +24,35 @@ def make_features(prices: pd.DataFrame) -> pd.DataFrame:
     Returns a wide DataFrame with feature columns for each ticker.
     """
     feats = []
+
     for t in prices.columns:
         px = prices[t]
         df = pd.DataFrame(index=prices.index)
+
+        # Momentum features
         for w in (5, 20, 60):
-            df[f"mom_{t}_{w}"] = px.pct_change(w)
-        df[f"vol_{t}_20"] = px.pct_change().rolling(20).std()
+            df[f"mom_{t}_{w}"] = px.pct_change(w, fill_method=None)
+
+        # Realized volatility (using daily pct_change)
+        df[f"vol_{t}_20"] = px.pct_change(fill_method=None).rolling(20).std()
+
+        # Price / moving average ratio
         df[f"ma_ratio_{t}_20"] = px / px.rolling(20).mean()
+
+        # RSI(14)
         df[f"rsi_{t}_14"] = rsi(px, 14)
+
+        # Replace inf / -inf by NaN and drop rows with all-NaN
+        df.replace([np.inf, -np.inf], np.nan, inplace=True)
         feats.append(df)
+
+    # Combine all tickers’ features
     F = pd.concat(feats, axis=1)
+
+    # Drop rows where everything is NaN (e.g. first few days)
+    F.dropna(how="all", inplace=True)
     return F
+
 
 def make_targets_excess(prices: pd.DataFrame, bench: pd.Series, horizon: int) -> pd.DataFrame:
     """
@@ -41,9 +60,22 @@ def make_targets_excess(prices: pd.DataFrame, bench: pd.Series, horizon: int) ->
     aggregated over the next 'horizon' days (t+1 ... t+h).
     Using log-returns ensures additivity over the window.
     """
-    lr_assets = np.log1p(prices.pct_change())
-    lr_bench  = np.log1p(bench.pct_change())
-    y_assets = lr_assets.shift(-1).rolling(horizon).sum()
-    y_bench  = lr_bench.shift(-1).rolling(horizon).sum()
-    Y = y_assets.subtract(y_bench, axis=0)  # DataFrame with one column per ticker
+    # Compute daily log-returns
+    lr_assets = np.log1p(prices.pct_change(fill_method=None))
+    lr_bench = np.log1p(bench.pct_change(fill_method=None))
+
+    # Sum of future log-returns over next 'horizon' days
+    y_assets = lr_assets.shift(-1).rolling(horizon, min_periods=1).sum()
+    y_bench = lr_bench.shift(-1).rolling(horizon, min_periods=1).sum()
+
+    # Excess return = asset - benchmark
+    Y = y_assets.subtract(y_bench, axis=0)
+
+    # Align with prices (important!)
+    Y = Y.reindex(prices.index)
+
+    # Clean infinities, keep NaN (they’ll be dropped later per-ticker)
+    Y.replace([np.inf, -np.inf], np.nan, inplace=True)
+
     return Y
+

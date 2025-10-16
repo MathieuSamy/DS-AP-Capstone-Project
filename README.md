@@ -61,21 +61,21 @@ auto-ml/
 ```
 ├── README.md
 ├── requirements.txt
-├── src/
+├── auto_ml_pkg/
 │   ├── config.py
 │   ├── data.py
 │   ├── features.py
 │   ├── models.py
 │   ├── backtest.py
 │   ├── evaluate.py
-│   └── viz.py
-├── scripts/
+│   ├──viz.py
 │   └── run_experiment.py
+├── scripts/
 ├── notebooks/
 │   └── 01_eda.ipynb
 └── outputs/
-├── figures/
-└── artifacts/
+    ├── figures/
+    ├──artifacts/
 ```
 
 ---
