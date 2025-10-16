@@ -1,7 +1,10 @@
 # Predicting Excess Returns in the Car Industry
+![Python](https://img.shields.io/badge/Python-3.10-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Last Update](https://img.shields.io/badge/Updated-Oct_2025-lightgrey.svg)
 
 ## Overview
-This project is part of the *Data Science and Advanced Programming* capstone final prject at HEC Lausanne.  
+This project is part of the final capstone project for the Data Science and Advanced Programming course at HEC Lausanne.  
 It aims to **predict the short-term excess returns** of major car industry companies using publicly available financial data from Yahoo Finance.
 
 The goal is to build and evaluate machine learning models (Linear Regression, Random Forest) that can forecast whether a stock will outperform or underperform the automotive sector benchmark over a short horizon (e.g. one week).
@@ -53,4 +56,62 @@ Main data types include:
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
+auto-ml/
+```
+├── README.md
+├── requirements.txt
+├── src/
+│   ├── config.py
+│   ├── data.py
+│   ├── features.py
+│   ├── models.py
+│   ├── backtest.py
+│   ├── evaluate.py
+│   └── viz.py
+├── scripts/
+│   └── run_experiment.py
+├── notebooks/
+│   └── 01_eda.ipynb
+└── outputs/
+├── figures/
+└── artifacts/
+```
+
+---
+
+## How to Run
+
+### 1️⃣ Environment Setup
+```bash
+git clone https://github.com/yourusername/auto-ml.git
+cd auto-ml
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2️⃣ Run Experiment
+
+```
+python scripts/run_experiment.py \
+  --model ridge \
+  --horizon 5 \
+  --train-start 2016-01-01 \
+  --test-start 2022-01-01 \
+  --test-end 2025-09-30
+```
+
+Results are saved automatically under:
+```
+outputs/figures/
+outputs/artifacts/
+```
+
+---
+
+
+**Mathieu Samy**  
+Master in Finance — HEC Lausanne  
+mathieu.samy@unil.ch  
+Lausanne, Switzerland
+
