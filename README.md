@@ -84,7 +84,7 @@ auto-ml/
 
 ### 1️⃣ Environment Setup
 ```bash
-git clone https://github.com/yourusername/auto-ml.git
+git clone https://github.com/MathieuSamy/DS-AP-Capstone-Project.git
 cd auto-ml
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
