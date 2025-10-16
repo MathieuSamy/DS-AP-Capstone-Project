@@ -57,9 +57,8 @@ Main data types include:
 ---
 
 ## Project Structure
-
-auto-ml/DS-AP-Capstone-Project
 ```
+auto-ml/DS-AP-Capstone-Project
 │
 ├── auto_ml_pkg/             
 │   ├── data.py
