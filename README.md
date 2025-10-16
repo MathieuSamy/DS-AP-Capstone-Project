@@ -11,6 +11,8 @@ The goal is to build and evaluate machine learning models (Linear Regression, Ra
 
 ---
 
+Mathieu le boss
+
 ## Objectives
 - Retrieve and preprocess historical price data for a selection of global car manufacturers (e.g., Tesla, Toyota, Ford, BMW, Renault).
 - Engineer time-series based financial features (momentum, volatility, RSI, moving averages).
