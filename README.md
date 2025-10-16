@@ -57,27 +57,37 @@ Main data types include:
 ---
 
 ## Project Structure
-auto-ml/
+
+auto-ml/DS-AP-Capstone-Project
 ```
-├── README.md
-├── requirements.txt
-├── auto_ml_pkg/
-│   ├── config.py
+│
+├── auto_ml_pkg/             
 │   ├── data.py
+│   ├── config.py
 │   ├── features.py
 │   ├── models.py
-│   ├── backtest.py
 │   ├── evaluate.py
-│   ├──viz.py
+│   ├── backtest.py
+│   ├── viz.py
 │   └── run_experiment.py
-├── scripts/
+│
+├── data/
+│   ├── raw/                  
+│   └── cache/                 
+│
 ├── notebooks/
-│   └── 01_eda.ipynb
-└── outputs/
-    ├── figures/
-    ├──artifacts/
+│   └── 01_exploration.ipynb
+│
+├── scripts/
+│   └── evaluate_model.py        
+│
+├── outputs/
+│   ├── artifacts/             
+│   └── figures/              
+│
+├── README.md
+└── requirements.txt
 ```
-
 ---
 
 ## How to Run
