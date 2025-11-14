@@ -6,6 +6,7 @@ def plot_equity(ec: pd.Series, path: str, title: str = "Top-K long (excess)"):
     """
     Saves a cumulative growth plot of the backtested strategy.
     """
+    plt.figure(figsize=(9, 4))
     ax = ec.plot(figsize=(9, 4))
     ax.set_title(title)
     ax.set_ylabel("Cumulative (×)")

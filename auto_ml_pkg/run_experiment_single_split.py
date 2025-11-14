@@ -70,7 +70,7 @@ def main():
             continue
         if not cols:
             print(f"[SKIP] {t}: no feature columns found.")
-            continue
+            continue  
 
         # Align indexes safely
         Y_t = Y[t].reindex(X.index)
@@ -119,7 +119,13 @@ def main():
     print("IC:", ic)
 
     # === 8) Backtest & export ===
-    ec = equity_curve(P, Yf, top_k=cfg.top_k)
+    ec = equity_curve(
+    P,
+    Yf,
+    top_k=cfg.top_k,
+    rebalance_every=cfg.horizon_days,  # normalement 5
+    transaction_cost_bps=10,           # par exemple 10 bps
+)
     ec.to_csv("outputs/artifacts/equity_curve.csv")
     P.to_csv("outputs/artifacts/predictions.csv")
     Yf.to_csv("outputs/artifacts/realized_excess.csv")

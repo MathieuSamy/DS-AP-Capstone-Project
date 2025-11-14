@@ -1,7 +1,32 @@
+# Virtual environments
 .venv/
+venv/
+
+# Python caches
 __pycache__/
+*.pyc
+*.pyo
+
+# Jupyter auto-saves
 .ipynb_checkpoints/
+
+# Outputs (NE JAMAIS PUSH)
 outputs/
-.DS_Store
-*.egg-info/
+outputs/*
+figures/
+artifacts/
+
+# Data that should not be versioned
 data/raw/
+data/cache/
+
+# OS garbage
+.DS_Store
+
+# Build/distribution
+*.egg-info/
+dist/
+build/
+
+# Project configuration that you don't want inside the repo
+pyproject.toml
