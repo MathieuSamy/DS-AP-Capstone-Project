@@ -29,3 +29,25 @@ def scatter_pred_vs_true(y_true: pd.Series, y_pred: pd.Series, path: str):
     plt.ylabel("Realized excess")
     plt.tight_layout()
     plt.savefig(path)
+
+def plot_multi_equity(df: pd.DataFrame, path: str, title: str):
+    """
+    Plot multiple cumulative curves on the same figure.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Each column is a cumulative series (e.g. benchmark or strategy curve).
+    path : str
+        Output path for the PNG file.
+    title : str
+        Figure title.
+    """
+    plt.figure(figsize=(9, 4))
+    ax = df.plot(ax=plt.gca())
+    ax.set_title(title)
+    ax.set_ylabel("Index level / Cumulative (×)")
+    ax.grid(True)
+    plt.tight_layout()
+    plt.savefig(path)
+    plt.close()

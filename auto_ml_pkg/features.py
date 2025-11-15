@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-def rsi(px: pd.Series, period: int = 14) -> pd.Series:
+def rsi(px: pd.Series, period: int = 14) -> pd.Series: # to compute RSI indicator for a price series
     """
     Computes a standard RSI using exponential moving averages of gains/losses.
     """
@@ -14,7 +14,7 @@ def rsi(px: pd.Series, period: int = 14) -> pd.Series:
     return 100 - 100 / (1 + rs)
 
 
-def make_features(prices: pd.DataFrame) -> pd.DataFrame:
+def make_features(prices: pd.DataFrame) -> pd.DataFrame: # to create technical features from price data
     """
     Constructs technical features per ticker using only past information:
     - Momentum over 5/20/60 days

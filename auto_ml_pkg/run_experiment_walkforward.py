@@ -4,7 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from auto_ml_pkg.config import Config
-from auto_ml_pkg.data import fetch_prices
+from auto_ml_pkg.data import fetch_prices, fetch_benchmark 
 from auto_ml_pkg.features import make_features, make_targets_excess
 from auto_ml_pkg.models import make_ridge
 from auto_ml_pkg.evaluate import regression_report, information_coefficient
@@ -50,13 +50,16 @@ def main():
     print("Sample preview:")
     print(prices.head(), "\n")
 
-    # Equal-weight benchmark from the universe
-    bench_ret = prices.pct_change(fill_method=None).mean(axis=1)
-    bench = (1 + bench_ret.fillna(0)).cumprod()
-    bench = bench / bench.iloc[0] * 100.0
-    bench.name = "EQUAL_WEIGHT_BENCH"
+    # Try to use CARZ as benchmark; if unavailable, fall back to an equal-weight universe index.
+    bench = fetch_benchmark(
+        symbol=cfg.benchmark,
+        start=cfg.train_start,
+        end=cfg.test_end,
+        fallback_from=prices,
+    )
 
     print("=== BENCHMARK CHECK ===")
+    print(f"Benchmark name: {bench.name}")
     print(f"Benchmark first/last: {bench.iloc[0]} → {bench.iloc[-1]}")
     print("NaN ratio:", bench.isna().mean(), "\n")
 
