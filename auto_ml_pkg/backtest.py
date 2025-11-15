@@ -32,6 +32,11 @@ def equity_curve(
     rets = []
     prev_weights = None  # portfolio weights at previous rebalance
 
+
+    # DEBUG ACCUMULATORS
+    turnovers = []
+    costs = []
+
     for i in range(0, len(dates), rebalance_every):
         dt = dates[i]
 
@@ -65,6 +70,10 @@ def equity_curve(
         cost = transaction_cost_bps / 10000.0 * turnover
         net_excess = port_excess - cost
 
+        # store for debug
+        turnovers.append(turnover)
+        costs.append(cost)
+
         rets.append((dt, net_excess))
         prev_weights = weights
 
@@ -74,4 +83,16 @@ def equity_curve(
 
     equity = (1 + s).cumprod()
     equity.name = "equity_excess"
+
+    # ==== DEBUG PRINT ====
+    if transaction_cost_bps != 0 and len(turnovers) > 0:
+        avg_turnover = float(np.mean(turnovers))
+        avg_cost = float(np.mean(costs))
+        total_cost = float(np.sum(costs))
+        print(
+            f"[COST DEBUG] avg turnover: {avg_turnover:.3f}, "
+            f"avg cost per rebalance: {avg_cost:.5f}, "
+            f"total cost over period: {total_cost:.4f}"
+        )
+        
     return equity

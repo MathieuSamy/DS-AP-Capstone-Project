@@ -124,7 +124,7 @@ def main():
     Yf,
     top_k=cfg.top_k,
     rebalance_every=cfg.horizon_days,  # normalement 5
-    transaction_cost_bps=10,           # par exemple 10 bps
+    transaction_cost_bps=cfg.transaction_cost_bps,           # par exemple 10 bps
 )
     ec.to_csv("outputs/artifacts/equity_curve.csv")
     P.to_csv("outputs/artifacts/predictions.csv")

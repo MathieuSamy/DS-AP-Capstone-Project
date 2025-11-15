@@ -202,7 +202,7 @@ def main():
     Y_all,
     top_k=cfg.top_k,
     rebalance_every=cfg.horizon_days,
-    transaction_cost_bps=10,
+    transaction_cost_bps=cfg.transaction_cost_bps,
 )
     ec.to_csv("outputs/artifacts/equity_curve_walkforward.csv")
 
