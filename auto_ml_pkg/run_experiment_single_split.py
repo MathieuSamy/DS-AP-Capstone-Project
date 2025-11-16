@@ -29,6 +29,7 @@ def main():
     print("Sample preview:")
     print(prices.head(5), "\n")
 
+
     # === 2) Build benchmark (CARZ with equal-weight fallback) ===
     # First try to fetch the benchmark specified in the Config (e.g. 'CARZ').
     # If it is not available (e.g. in this environment), fall back to an equal-weight index of the universe.
