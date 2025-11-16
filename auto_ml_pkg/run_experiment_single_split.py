@@ -17,8 +17,8 @@ def main():
     # 0) Load configuration (tickers, dates, top_k, transaction costs, etc.)
     cfg = Config() 
     # Ensure output folders exist for saving figures and CSV artifacts
-    os.makedirs("outputs/figures", exist_ok=True)
-    os.makedirs("outputs/artifacts", exist_ok=True)
+    os.makedirs("auto_ml/DS-AP-Capstone-Project/outputs/figures", exist_ok=True)
+    os.makedirs("auto_ml/DS-AP-Capstone-Project/outputs/artifacts", exist_ok=True)
 
     # 1) Fetch and inspect data (Download or load cached daily close prices for the whole universe)
     prices = fetch_prices(cfg.tickers, cfg.train_start, cfg.test_end).dropna(how="all")
@@ -72,14 +72,14 @@ def main():
             c.startswith(p) for p in (f"mom_{t}_", f"vol_{t}_", f"ma_ratio_{t}_", f"rsi_{t}_")
         )]
 
-        if t not in Y.columns:
+        if t not in Y.columns:                          # to check if target column exists
             print(f"[SKIP] {t}: target column missing in Y.")
             continue
-        if not cols:
+        if not cols:                                    # to check if any feature columns were found
             print(f"[SKIP] {t}: no feature columns found.")
             continue  
 
-        # Align indexes safely
+        # Align indexes safely and clean data 
         Y_t = Y[t].reindex(X.index)
         Y_t.replace([np.inf, -np.inf], np.nan, inplace=True)
         X_clean = X[cols].replace([np.inf, -np.inf], np.nan)
@@ -106,60 +106,60 @@ def main():
         preds[t] = p
         reals[t] = te[t]
 
-    # === 6) Aggregate predictions ===
-    P = pd.DataFrame(preds).sort_index()
-    Yf = pd.DataFrame(reals).sort_index()
+    # === 6) Aggregate predictions === (from dict to DataFrame)
+    P = pd.DataFrame(preds).sort_index()                          # to create DataFrame of predictions
+    Yf = pd.DataFrame(reals).sort_index()                         # to create DataFrame of realized values
 
     if P.empty:
         raise RuntimeError("No predictions created. Check tickers, target alignment, or data availability.")
 
-    # === 7) Evaluate ===
-    stack_true = Yf.stack()
-    stack_pred = P.stack()
+    # === 7) Evaluate === (regression metrics and IC)
+    stack_true = Yf.stack()                                    # to stack realized values
+    stack_pred = P.stack()                                     # to stack predicted values
 
-    reg = regression_report(stack_true, stack_pred)
-    ic = information_coefficient(stack_true, stack_pred)
+    reg = regression_report(stack_true, stack_pred)            # to compute regression metrics
+    ic = information_coefficient(stack_true, stack_pred)       # to compute information coefficient
 
     print("\n==== REGRESSION METRICS ====")
     for k, v in reg.items():
         print(f"{k}: {v:.6f}")
     print("IC:", ic)
 
-    # === 8) Backtest & export ===
-    ec = equity_curve(
-    P,
-    Yf,
-    top_k=cfg.top_k,
-    rebalance_every=cfg.horizon_days,  # normalement 5
-    transaction_cost_bps=cfg.transaction_cost_bps,           # par exemple 10 bps
+    # === 8) Backtest & export === (Top-k long strategy based on predicted excess returns)
+    ec = equity_curve(                                      # to compute equity curve for backtesting
+    P,                                                      # predicted scores
+    Yf,                                                     # realized excess returns
+    top_k=cfg.top_k,                                        # e.g. 5
+    rebalance_every=cfg.horizon_days,                       # normally 5
+    transaction_cost_bps=cfg.transaction_cost_bps,          # for example 10 bps
 )
-    ec.to_csv("outputs/artifacts/equity_curve.csv")
-    P.to_csv("outputs/artifacts/predictions.csv")
-    Yf.to_csv("outputs/artifacts/realized_excess.csv")
+    ec.to_csv("auto_ml/DS-AP-Capstone-Project/outputs/artifacts/equity_curve.csv")         # to save equity curve to CSV
+    P.to_csv("auto_ml/DS-AP-Capstone-Project/outputs/artifacts/predictions.csv")           # to save predictions to CSV
+    Yf.to_csv("auto_ml/DS-AP-Capstone-Project/outputs/artifacts/realized_excess.csv")      # to save realized excess returns to CSV
 
-    plot_equity(ec, "outputs/figures/equity_curve.png",
-                title=f"Top-{cfg.top_k} long — Ridge — h={cfg.horizon_days}")
-    scatter_pred_vs_true(stack_true, stack_pred, "outputs/figures/pred_vs_realized.png")
+    plot_equity(ec, "auto_ml/DS-AP-Capstone-Project/outputs/figures/equity_curve.png",                                     # to plot equity curve
+                title=f"Top-{cfg.top_k} long — Ridge — h={cfg.horizon_days}")               # plot title
+    scatter_pred_vs_true(stack_true, stack_pred, "auto_ml/DS-AP-Capstone-Project/outputs/figures/pred_vs_realized.png")    # to plot scatter of predictions vs realized
 
     # === 9) Benchmark comparison: CARZ vs Equal-Weight universe ===
     # We rebuild an equal-weight benchmark from the same automotive universe
     # to compare it with the CARZ ETF (sector benchmark).
-    bench_ew_ret = prices.pct_change(fill_method=None).mean(axis=1)
-    bench_ew = (1 + bench_ew_ret.fillna(0)).cumprod()
-    bench_ew = bench_ew / bench_ew.iloc[0] * 100.0
-    bench_ew.name = "EQUAL_WEIGHT_BENCH"
+    bench_ew_ret = prices.pct_change(fill_method=None).mean(axis=1) # equal-weight daily returns
+    bench_ew = (1 + bench_ew_ret.fillna(0)).cumprod()               # cumulative returns
+    bench_ew = bench_ew / bench_ew.iloc[0] * 100.0                  # rescale to base 100
+    bench_ew.name = "EQUAL_WEIGHT_BENCH" 
 
     # The 'bench' variable used earlier in make_targets_excess corresponds to CARZ (via fetch_benchmark).
     # We rescale it to base 100 for a fair visual comparison.
     bench_carz = bench / bench.iloc[0] * 100.0
     bench_carz.name = "CARZ"
 
-    bench_df = pd.concat([bench_carz, bench_ew], axis=1).dropna()
-    bench_df.to_csv("outputs/artifacts/benchmarks_CARZ_vs_EW_single_split.csv")
+    bench_df = pd.concat([bench_carz, bench_ew], axis=1).dropna()                   # to combine both benchmarks into a DataFrame
+    bench_df.to_csv("auto_ml/DS-AP-Capstone-Project/outputs/artifacts/benchmarks_CARZ_vs_EW_single_split.csv")     # to save benchmarks comparison to CSV
 
-    plot_multi_equity(
+    plot_multi_equity(      # to plot multiple equity curves     
         bench_df,
-        "outputs/figures/benchmarks_CARZ_vs_EW_single_split.png",
+        "auto_ml/DS-AP-Capstone-Project/outputs/figures/benchmarks_CARZ_vs_EW_single_split.png",
         title="CARZ vs Equal-Weight Automotive Benchmark (Single Split)"
     )
 
@@ -169,16 +169,16 @@ def main():
     # and see how the same signals behave under a different definition of "excess return".
 
     # 10.1 Recompute excess returns vs equal-weight benchmark
-    Y_ew = make_targets_excess(prices, bench_ew, cfg.horizon_days)
+    Y_ew = make_targets_excess(prices, bench_ew, cfg.horizon_days)  # to create excess return targets vs equal-weight benchmark
 
     # Align Y_ew with the dates where we have predictions (Yf).
-    Y_ew_aligned = Y_ew.reindex(Yf.index).ffill().bfill()
+    Y_ew_aligned = Y_ew.reindex(Yf.index).ffill().bfill()           # to align excess returns with predictions   
 
     # 10.2 Backtest strategy using excess vs CARZ (already done as 'ec')
-    ec_carz = ec.rename("Strategy_excess_vs_CARZ")
+    ec_carz = ec.rename("Strategy_excess_vs_CARZ")                  # to rename equity curve for CARZ benchmark  
 
     # 10.3 Backtest strategy using excess vs Equal-Weight
-    ec_ew = equity_curve(
+    ec_ew = equity_curve(                                           # to compute equity curve for equal-weight benchmark
         P,
         Y_ew_aligned,
         top_k=cfg.top_k,
@@ -187,16 +187,16 @@ def main():
     ).rename("Strategy_excess_vs_EW")
 
     # 10.4 Save and plot both curves
-    strat_df = pd.concat([ec_carz, ec_ew], axis=1).dropna()
-    strat_df.to_csv("outputs/artifacts/strategy_CARZ_vs_EW_single_split.csv")
+    strat_df = pd.concat([ec_carz, ec_ew], axis=1).dropna()         # to combine both strategy equity curves into a DataFrame
+    strat_df.to_csv("auto_ml/DS-AP-Capstone-Project/outputs/artifacts/strategy_CARZ_vs_EW_single_split.csv")
 
-    plot_multi_equity(
+    plot_multi_equity(                                              # to plot multiple equity curves for strategies           
         strat_df,
-        "outputs/figures/strategy_CARZ_vs_EW_single_split.png",
+        "auto_ml/DS-AP-Capstone-Project/outputs/figures/strategy_CARZ_vs_EW_single_split.png",
         title=f"Strategy vs Two Benchmarks (Top-{cfg.top_k}, h={cfg.horizon_days}, Single Split)"
     )
 
-    print("\n✅ Experiment completed successfully. Results saved in 'outputs/'.\n")
+    print("\n✅ Experiment completed successfully. Results saved in 'auto_ml/DS-AP-Capstone-Project/outputs/'.\n")
 
 
 if __name__ == "__main__":

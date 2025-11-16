@@ -6,8 +6,8 @@ import pandas as pd
 import yfinance as yf
 
 # Directories for cached and raw CSVs
-DATA_DIR = "data/cache"
-RAW_DIR = "data/raw"  # optional: for manually downloaded Yahoo CSVs
+DATA_DIR = "auto_ml/DS-AP-Capstone-Project/data/cache"
+RAW_DIR = "auto_ml/DS-AP-Capstone-Project/data/raw"  # optional: for manually downloaded Yahoo CSVs
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(RAW_DIR, exist_ok=True)
 

@@ -17,8 +17,9 @@ figures/
 artifacts/
 
 # Data that should not be versioned
-data/raw/
 data/cache/
+data/raw/
+data/
 
 # OS garbage
 .DS_Store

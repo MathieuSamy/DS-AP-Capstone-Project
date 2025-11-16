@@ -2,12 +2,12 @@ import pandas as pd
 import numpy as np
 
 
-def equity_curve(
-    pred_scores: pd.DataFrame,
-    future_excess: pd.DataFrame,
-    top_k: int = 5,
-    rebalance_every: int = 5,
-    transaction_cost_bps: float = 0.0,
+def equity_curve(                               # to backtest a top-k long strategy based on predicted excess returns
+    pred_scores: pd.DataFrame,                  # predicted excess returns
+    future_excess: pd.DataFrame,                # realized excess returns
+    top_k: int = 5,                             # number of top tickers to hold 
+    rebalance_every: int = 5,                   # rebalance frequency (in days)
+    transaction_cost_bps: float = 0.0,          # transaction cost in basis points
 ) -> pd.Series:
     """
     Backtest a top-k long strategy based on predicted EXCESS returns.
@@ -29,23 +29,23 @@ def equity_curve(
     if not dates:
         return pd.Series(dtype=float, name="equity_excess")
 
-    rets = []
+    rets = []            # list of (date, net excess return) tuples
     prev_weights = None  # portfolio weights at previous rebalance
 
 
     # DEBUG ACCUMULATORS
-    turnovers = []
-    costs = []
+    turnovers = []     # list of turnover values per rebalance
+    costs = []         # list of transaction costs per rebalance
 
-    for i in range(0, len(dates), rebalance_every):
-        dt = dates[i]
+    for i in range(0, len(dates), rebalance_every): # step through rebalance dates
+        dt = dates[i]                               # current rebalance date
 
         # Drop NaNs
-        p = pred_scores.loc[dt].dropna()
-        y = future_excess.loc[dt].dropna()
+        p = pred_scores.loc[dt].dropna()            # predicted scores at date dt
+        y = future_excess.loc[dt].dropna()          # realized excess returns at date dt
 
         # Intersection of tickers
-        common = p.index.intersection(y.index)
+        common = p.index.intersection(y.index)      # tickers with both predictions and realized returns
         if len(common) < top_k:
             continue
 
@@ -53,22 +53,22 @@ def equity_curve(
         picks = p[common].sort_values(ascending=False).head(top_k).index
 
         # 2) Equal weights
-        weights = pd.Series(0.0, index=common)
-        weights[picks] = 1.0 / top_k
+        weights = pd.Series(0.0, index=common)      # initialize weights       
+        weights[picks] = 1.0 / top_k                # equal weight for selected tickers
 
         # 3) Turnover vs previous weights
-        if prev_weights is None:
+        if prev_weights is None:                                        # first rebalance
             turnover = 0.0
         else:
-            w_prev = prev_weights.reindex(weights.index).fillna(0.0)
-            turnover = (weights - w_prev).abs().sum() / 2.0
+            w_prev = prev_weights.reindex(weights.index).fillna(0.0)    # align previous weights
+            turnover = (weights - w_prev).abs().sum() / 2.0             # turnover calculation
 
         # 4) Realized excess return of the portfolio
-        port_excess = (y[picks] * weights[picks]).sum()
+        port_excess = (y[picks] * weights[picks]).sum()                 # portfolio excess return
 
         # 5) Transaction cost (bps → fraction)
-        cost = transaction_cost_bps / 10000.0 * turnover
-        net_excess = port_excess - cost
+        cost = transaction_cost_bps / 10000.0 * turnover                # transaction cost
+        net_excess = port_excess - cost                                 # net excess return after cost
 
         # store for debug
         turnovers.append(turnover)

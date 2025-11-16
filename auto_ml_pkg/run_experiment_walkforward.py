@@ -1,4 +1,4 @@
-import os
+import os 
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -11,8 +11,33 @@ from auto_ml_pkg.evaluate import regression_report, information_coefficient
 from auto_ml_pkg.backtest import equity_curve
 from auto_ml_pkg.viz import plot_equity, scatter_pred_vs_true
 
+# Difference between run_experiment_single_split.py and run_experiment_walkforward.py
+# - Single split:
+#   - uses one fixed train / test temporal split.
+#   - fast to run, useful for prototyping, debugging and quick visual checks.
+#   - provides a single out‑of‑sample (OOS) estimate that can be sensitive to the chosen period.
+# - Walk‑forward:
+#   - uses multiple folds with an expanding or rolling training window and non‑overlapping test windows.
+#   - retrains periodically and aggregates OOS predictions across folds.
+#   - gives a more robust, realistic assessment of time‑series performance but is more computationally expensive.
+# Practical guidance:
+# - Use single split for development and fast iteration.
+# - Use walk‑forward for final validation / reporting to measure stability over time.
 
-def build_walkforward_folds(cfg: Config) -> list[dict]:
+# NOTE: In this walk‑forward script we DO NOT execute the benchmark comparison
+#       (CARZ vs Equal‑Weight) on every fold. Reasons and guidance:
+#       - Running benchmark vs EW per fold is redundant and expensive because
+#         the universe-level equal-weight benchmark is deterministic given prices.
+#       - Recomputing and plotting bench comparisons on every fold adds heavy IO
+#         and plotting overhead and inflates compute time for walk‑forward runs.
+#       - Instead, this script focuses on producing aggregated OOS predictions
+#         across folds. Run benchmark comparisons separately (once) on the
+#         aggregated OOS results or in the single-split script when you need
+#         per-run visual diagnostics.
+#       - If you need fold-level benchmark diagnostics, compute them offline
+#         from saved fold outputs to avoid slowing the core walk‑forward loop.
+
+def build_walkforward_folds(cfg: Config) -> list[dict]:    
     """
     Defines an expanding-window walk-forward scheme.
     Folds are non-overlapping in the test period.
@@ -38,8 +63,8 @@ def build_walkforward_folds(cfg: Config) -> list[dict]:
 def main():
     # === 0) Configuration & folders ===
     cfg = Config()
-    os.makedirs("outputs/figures", exist_ok=True)
-    os.makedirs("outputs/artifacts", exist_ok=True)
+    os.makedirs("auto_ml/DS-AP-Capstone-Project/outputs/figures", exist_ok=True)
+    os.makedirs("auto_ml/DS-AP-Capstone-Project/outputs/artifacts", exist_ok=True)
 
     # === 1) Prices & benchmark (equal-weight) ===
     prices = fetch_prices(cfg.tickers, cfg.train_start, cfg.test_end).dropna(how="all")
@@ -197,7 +222,7 @@ def main():
 
     # Save per-fold metrics
     fold_df = pd.DataFrame(fold_metrics)
-    fold_df.to_csv("outputs/artifacts/walkforward_metrics.csv", index=False)
+    fold_df.to_csv("auto_ml/DS-AP-Capstone-Project/outputs/artifacts/walkforward_metrics.csv", index=False)
 
     # === 6) Backtest & plots on the full walk-forward OOS period ===
     ec = equity_curve(
@@ -207,23 +232,23 @@ def main():
     rebalance_every=cfg.horizon_days,
     transaction_cost_bps=cfg.transaction_cost_bps,
 )
-    ec.to_csv("outputs/artifacts/equity_curve_walkforward.csv")
+    ec.to_csv("auto_ml/DS-AP-Capstone-Project/outputs/artifacts/equity_curve_walkforward.csv")
 
     plot_equity(
         ec,
-        "outputs/figures/equity_curve_walkforward.png",
+        "auto_ml/DS-AP-Capstone-Project/outputs/figures/equity_curve_walkforward.png",
         title=f"Walk-forward Top-{cfg.top_k} long — Ridge — h={cfg.horizon_days}"
     )
     scatter_pred_vs_true(
         stack_true_all,
         stack_pred_all,
-        "outputs/figures/pred_vs_realized_walkforward.png"
+        "auto_ml/DS-AP-Capstone-Project/outputs/figures/pred_vs_realized_walkforward.png"
     )
 
-    P_all.to_csv("outputs/artifacts/predictions_walkforward.csv")
-    Y_all.to_csv("outputs/artifacts/realized_excess_walkforward.csv")
+    P_all.to_csv("auto_ml/DS-AP-Capstone-Project/outputs/artifacts/predictions_walkforward.csv")
+    Y_all.to_csv("auto_ml/DS-AP-Capstone-Project/outputs/artifacts/realized_excess_walkforward.csv")
 
-    print("\n✅ Walk-forward experiment completed. Results saved in 'outputs/'.\n")
+    print("\n✅ Walk-forward experiment completed. Results saved in 'auto_ml/DS-AP-Capstone-Project/outputs/'.\n")
 
 
 if __name__ == "__main__":
