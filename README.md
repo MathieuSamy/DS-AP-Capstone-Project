@@ -74,9 +74,6 @@ auto-ml/DS-AP-Capstone-Project
 │   ├── raw/                  
 │   └── cache/                 
 │
-├── notebooks/
-│   └── 01_exploration.ipynb
-│
 ├── scripts/
 │   └── evaluate_model.py        
 │
