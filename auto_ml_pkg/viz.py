@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def plot_equity(ec: pd.Series, path: str, title: str = "Top-K long (excess)"):
     """

@@ -4,6 +4,8 @@ import time
 from typing import Iterable
 import pandas as pd
 import yfinance as yf
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Directories for cached and raw CSVs
 DATA_DIR = "auto_ml/DS-AP-Capstone-Project/data/cache"

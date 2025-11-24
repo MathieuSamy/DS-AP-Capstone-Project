@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field # to define configuration class
 from typing import List # to type-hint list of strings
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 @dataclass
 class Config:

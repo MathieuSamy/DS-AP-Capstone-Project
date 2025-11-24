@@ -2,6 +2,8 @@ import os # to handle file system operations
 import numpy as np # to handle numerical operations and arrays 
 import pandas as pd # for data manipulation and analysis
 from tqdm import tqdm # to display progress bars during iterations
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # === Import project modules ===
 from auto_ml_pkg.config import Config # to load experiment configuration

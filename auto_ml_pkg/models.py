@@ -1,6 +1,8 @@
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def make_ridge(alpha=2.0):
     """

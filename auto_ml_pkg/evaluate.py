@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def regression_report(y_true: pd.Series, y_pred: pd.Series) -> dict:
     """

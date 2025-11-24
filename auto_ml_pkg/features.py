@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def rsi(px: pd.Series, period: int = 14) -> pd.Series: # to compute RSI indicator for a price series
     """
