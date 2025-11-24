@@ -72,10 +72,7 @@ auto-ml
 │
 ├── data/
 │   ├── raw/                  
-│   └── cache/                 
-│
-├── scripts/
-│   └── evaluate_model.py        
+│   └── cache/                       
 │
 ├── outputs/
 │   ├── artifacts/             
@@ -120,4 +117,3 @@ outputs/artifacts/
 Master in Finance — HEC Lausanne  
 mathieu.samy@unil.ch  
 Lausanne, Switzerland
-

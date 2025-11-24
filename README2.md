@@ -1,8 +1,8 @@
-# AutoML for Excess Return Prediction  
+# AutoML for Excess Return Prediction in the Car Industry
 ### *Capstone Project — Data Science & Advanced Programming (HEC Lausanne)*
 
 This repository contains the full implementation of my capstone project for the Data Science & Advanced Programming course at HEC Lausanne.  
-The objective is to build a clean, reproducible, and fully automated Python pipeline to test whether technical indicators + machine learning can predict short-horizon excess returns in the global automobile industry.
+The objective is to build a clean, reproducible, and fully automated Python pipeline to test whether technical indicators + machine learning can predict **short-horizon excess returns in the global automobile industry**.
 
 ---
 
@@ -174,26 +174,27 @@ Artifacts (CSV)
 - predictions_walkforward.csv
 - realized_excess_walkforward.csv
 
-⸻
-
-Author
+--- 
 
 **Mathieu SAMY**  
 Master in Finance — HEC Lausanne  
 Email: mathieu.samy@unil.ch  
 Location: Lausanne, Switzerland
+---
 
-⸻
-
-License
-
-MIT License — free to use, modify, and distribute.
-
-⸻
-
-Academic Context
+## Academic Context
 
 This project was completed as the final capstone for the
 Data Science & Advanced Programming course (HEC Lausanne, Fall 2025).
 
 The methodology, code design, walk‑forward evaluation and backtesting adhere to academic standards in quantitative finance research.
+
+--- 
+
+## License
+
+MIT License — free to use, modify, and distribute.
+
+![Python](https://img.shields.io/badge/Python-3.10-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Last Update](https://img.shields.io/badge/Updated-Oct_2025-lightgrey.svg)
