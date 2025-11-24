@@ -7,9 +7,22 @@ import yfinance as yf
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# Directories for cached and raw CSVs
-DATA_DIR = "auto_ml/DS-AP-Capstone-Project/data/cache"
-RAW_DIR = "auto_ml/DS-AP-Capstone-Project/data/raw"  # optional: for manually downloaded Yahoo CSVs
+# ============================================================
+# === Directories for cached and raw CSVs (GLOBAL auto_ml/)
+# ============================================================
+
+# BASE_DIR = folder of this file → auto_ml/auto_ml_pkg
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# PROJECT_ROOT = parent folder → auto_ml/
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+
+# All cached prices will go in auto_ml/data/cache
+DATA_DIR = os.path.join(PROJECT_ROOT, "data", "cache")
+
+# Manually downloaded CSVs will go in auto_ml/data/raw
+RAW_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
+
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(RAW_DIR, exist_ok=True)
 
@@ -90,7 +103,7 @@ def _load_cache(ticker: str, start: str, end: str) -> pd.Series | None:
 def _load_raw_csv_if_available(ticker: str, start: str, end: str) -> pd.Series | None:
     """
     Try to load data from a manually downloaded CSV (from Yahoo),
-    located at data/raw/<TICKER>.csv. Accepts either 'Close' or 'Adj Close'.
+    located at auto_ml/data/raw/<TICKER>.csv. Accepts either 'Close' or 'Adj Close'.
     """
     path = _raw_path(ticker)
     if not os.path.exists(path):
@@ -196,7 +209,7 @@ def fetch_prices(tickers: Iterable[str], start: str, end: str) -> pd.DataFrame:
     if not series:
         raise RuntimeError(
             "No price data available (network blocked and no cache). "
-            "Upload CSVs to data/raw/<TICKER>.csv or data/cache/<TICKER>.csv with columns Date,Close (or Adj Close)."
+            "Upload CSVs to auto_ml/data/raw/<TICKER>.csv or auto_ml/data/cache/<TICKER>.csv with columns Date,Close (or Adj Close)."
         )
 
     prices = pd.concat(series, axis=1).sort_index()
