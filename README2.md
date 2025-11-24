@@ -1,5 +1,9 @@
 ## AutoML for Excess Return Prediction in the Car Industry
-### *Capstone Project — Data Science & Advanced Programming (HEC Lausanne)*
+![Python](https://img.shields.io/badge/Python-3.10-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Last Update](https://img.shields.io/badge/Updated-Oct_2025-lightgrey.svg)
+
+### Capstone Project — Data Science & Advanced Programming (HEC Lausanne)
 
 This repository contains the full implementation of my capstone project for the Data Science & Advanced Programming course at HEC Lausanne.  
 The objective is to build a clean, reproducible, and fully automated Python pipeline to test whether technical indicators + machine learning can predict **short-horizon excess returns in the global automobile industry**.
