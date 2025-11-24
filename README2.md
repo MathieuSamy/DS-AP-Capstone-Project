@@ -80,17 +80,18 @@ The trading strategy:
 2. **Walk-Forward** (2016 → … → 2025), 6 folds  
 
 ## Output Structure
-
+```
 auto_ml/
 │
 ├── outputs/
 │   ├── figures/      # PNG charts (equity curves, scatter plots, benchmarks)
 │   └── artifacts/    # CSV predictions, realized excess returns, metrics
-
+```
 ---
 
 # 4. Project Structure
 
+```
 auto_ml/
 │
 ├── auto_ml_pkg/
@@ -116,6 +117,7 @@ auto_ml/
 ├── environment.yml
 ├── README.md
 └── requirements.txt
+```
 
 ---
 
