@@ -1,4 +1,4 @@
-# AutoML for Excess Return Prediction in the Car Industry
+## AutoML for Excess Return Prediction in the Car Industry
 ### *Capstone Project — Data Science & Advanced Programming (HEC Lausanne)*
 
 This repository contains the full implementation of my capstone project for the Data Science & Advanced Programming course at HEC Lausanne.  
@@ -6,7 +6,7 @@ The objective is to build a clean, reproducible, and fully automated Python pipe
 
 ---
 
-##  Project Overview
+###  Project Overview
 
 The project includes:
 
@@ -19,7 +19,7 @@ The project includes:
 
 ---
 
-# 1. Project Goal
+## 1. Project Goal
 
 This project predicts **5-day ahead excess returns** for 13 major global automakers:
 
@@ -30,13 +30,13 @@ This project predicts **5-day ahead excess returns** for 13 major global automak
 
 Targets are defined relative to the **CARZ automotive ETF** (or equal-weight fallback).
 
-👉 The final strategy selects the **Top-5 predicted stocks**, invests equally, and rebalances every 5 days.
+The final strategy selects the **Top-5 predicted stocks**, invests equally, and rebalances every 5 days.
 
 ---
 
-# 2. Key Features
+## 2. Key Features
 
-## Feature Engineering
+### Feature Engineering
 
 All features are strictly past-dependent:
 
@@ -45,7 +45,7 @@ All features are strictly past-dependent:
 - Price / MA20 ratio
 - RSI(14)
 
-## Models
+### Models
 
 - **Ridge Regression** (one model per ticker)
 
@@ -55,7 +55,7 @@ Chosen for its:
 - Low overfitting risk  
 - Ability to extract weak but meaningful signals  
 
-## Evaluation Metrics
+### Evaluation Metrics
 
 - MSE, MAE, R²  
 - Pearson & Spearman Information Coefficient (IC)  
@@ -64,7 +64,7 @@ Chosen for its:
 
 ---
 
-# 3. Backtesting
+## 3. Backtesting
 
 The trading strategy:
 
@@ -74,12 +74,12 @@ The trading strategy:
 - Includes **10 bps per turnover** transaction costs  
 - Produces **gross and net** equity curves  
 
-## Evaluation Modes
+### Evaluation Modes
 
 1. **Single Train–Test Split** (2016–2022 → 2023–2025)  
 2. **Walk-Forward** (2016 → … → 2025), 6 folds  
 
-## Output Structure
+### Output Structure
 ```
 auto_ml/
 │
@@ -89,7 +89,7 @@ auto_ml/
 ```
 ---
 
-# 4. Project Structure
+## 4. Project Structure
 
 ```
 auto_ml/
@@ -121,9 +121,9 @@ auto_ml/
 
 ---
 
-# 5. Installation & Execution
+## 5. Installation & Execution
 
-## Clone the Repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/MathieuSamy/auto_ml.git
@@ -133,7 +133,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ``` 
-# 6. Run Experiments
+## 6. Run Experiments
 
 Choose and run one of the experiments below from the project root.
 
@@ -156,7 +156,7 @@ All outputs will be written to:
 auto_ml/outputs/figures/  
 auto_ml/outputs/artifacts/
 
-# 7. Exported Results
+## 7. Exported Results
 
 Figures
 - equity_curve.png
@@ -180,9 +180,10 @@ Artifacts (CSV)
 Master in Finance — HEC Lausanne  
 Email: mathieu.samy@unil.ch  
 Location: Lausanne, Switzerland
+
 ---
 
-## Academic Context
+### Academic Context
 
 This project was completed as the final capstone for the
 Data Science & Advanced Programming course (HEC Lausanne, Fall 2025).
@@ -191,7 +192,7 @@ The methodology, code design, walk‑forward evaluation and backtesting adhere t
 
 --- 
 
-## License
+### License
 
 MIT License — free to use, modify, and distribute.
 
